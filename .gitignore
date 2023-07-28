@@ -1,0 +1,8 @@
+ChatBee-frontend/node_modules
+
+ChatBee-frontend/build
+
+ChatBee-backend/node_modules
+
+ChatBee-backend/.env
+ChatBee-backend/.DS_Store
