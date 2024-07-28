@@ -42,7 +42,7 @@ function Sidebar() {
     });
 
     function getRooms() {
-        fetch("https://ChatBee148.herokuapp.com/rooms")
+        fetch("https://chatbee203.herokuapp.com/rooms")
             .then((res) => res.json())
             .then((data) => setRooms(data));
     }
