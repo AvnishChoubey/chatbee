@@ -25,9 +25,9 @@ function MessageForm() {
         return month + "/" + day + "/" + year;
     }
 
-    function handleSubmit(e) {
-        e.preventDefault();
-    }
+    // function handleSubmit(e) {
+    //     e.preventDefault();
+    // }
 
     function scrollToBottom() {
         messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -69,11 +69,11 @@ function MessageForm() {
                         <div key={idx}>
                             <p className="alert alert-info text-center message-date-indicator">{date}</p>
                             {messagesByDate?.map(({ content, time, from: sender }, msgIdx) => (
-                                <div className={sender?.email == user?.email ? "message" : "incoming-message"} key={msgIdx}>
+                                <div className={sender?.email === user?.email ? "message" : "incoming-message"} key={msgIdx}>
                                     <div className="message-inner">
                                         <div className="d-flex align-items-center mb-3">
                                             <img src={sender.picture} style={{ width: 35, height: 35, objectFit: "cover", borderRadius: "50%", marginRight: 10 }} />
-                                            <p className="message-sender">{sender._id == user?._id ? "You" : sender.name}</p>
+                                            <p className="message-sender">{sender._id === user?._id ? "You" : sender.name}</p>
                                         </div>
                                         <p className="message-content">{content}</p>
                                         <p className="message-timestamp-left">{time}</p>

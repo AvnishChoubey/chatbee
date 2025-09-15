@@ -29,10 +29,10 @@ function Signup() {
     async function uploadImage() {
         const data = new FormData();
         data.append("file", image);
-        data.append("upload_preset", "mk3fpyfl");
+        data.append("upload_preset", "ml_default");
         try {
             setUploadingImg(true);
-            let res = await fetch("https://api.cloudinary.com/v1_1/dmsvxvihz/image/upload", {
+            let res = await fetch(`https://api.cloudinary.com/v1_1/dol54i3db/image/upload`, {
                 method: "post",
                 body: data,
             });
