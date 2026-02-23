@@ -3,7 +3,7 @@ const User = require('./models/User')
 const Message = require('./models/Message')
 
 const rooms = ['Technology', 'Sports', 'Crypto', 'General'];
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 const express = require('express');
 const http = require('http');
