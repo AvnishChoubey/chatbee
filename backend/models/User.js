@@ -60,10 +60,10 @@ UserSchema.pre('save', function(next) {
   // static method to find document in users collection by email and password
   UserSchema.statics.findByCredentials = async function(email, password) {
     const user = await User.findOne({email});
-    if(!user) throw new Error('invalid email or password');
+    if(!user) throw new Error('invalid email');
   
     const isMatch = await bcrypt.compare(password, user.password);
-    if(!isMatch) throw new Error('invalid email or password')
+    if(!isMatch) throw new Error('invalid password')
     return user
   };
 
