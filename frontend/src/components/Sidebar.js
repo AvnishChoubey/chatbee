@@ -28,14 +28,24 @@ function Sidebar() {
         if (currentRoom !== room) dispatch(addNotifications(room));
     });
 
+    // useEffect(() => {
+    //     if (user) {
+    //         setCurrentRoom("general");
+    //         getRooms();
+    //         socket.emit("join-room", "general");
+    //         socket.emit("new-user");
+    //     }
+    // }, []);
+
     useEffect(() => {
-        if (user) {
-            setCurrentRoom("general");
-            getRooms();
-            socket.emit("join-room", "general");
-            socket.emit("new-user");
-        }
-    }, []);
+        if (!user) return;
+
+        setCurrentRoom("general");
+        getRooms();
+        socket.emit("join-room", "general");
+        socket.emit("new-user");
+
+    }, [user, socket, getRooms, setCurrentRoom]);
 
     socket.off("new-user").on("new-user", (payload) => {
         setMembers(payload);
@@ -79,7 +89,7 @@ function Sidebar() {
                 <ListGroup.Item key={member.id} style={{ cursor: "pointer" }} active={privateMemberMsg?._id === member?._id} onClick={() => handlePrivateMemberMsg(member)} disabled={member._id === user._id}>
                     <Row>
                         <Col xs={2} className="member-status">
-                            <img src={member.picture} className="member-status-img" />
+                            <img src={member.picture} className="member-status-img" alt="member dp"/>
                             {member.status === "online" ? <i className="fas fa-circle sidebar-online-status"></i> : <i className="fas fa-circle sidebar-offline-status"></i>}
                         </Col>
                         <Col xs={9}>

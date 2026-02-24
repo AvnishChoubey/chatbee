@@ -18,7 +18,7 @@ function Navigation() {
             <Container>
                 <LinkContainer to="/">
                     <Navbar.Brand>
-                        <img src={logo} style={{ width: 80, height: 80 ,borderRadius:'10%'}} />
+                        <img src={logo} style={{ width: 80, height: 80 ,borderRadius:'10%'}} alt="chatbee logo"/>
                     </Navbar.Brand>
                 </LinkContainer>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -39,7 +39,7 @@ function Navigation() {
                             <NavDropdown
                                 title={
                                     <>
-                                        <img src={user.picture} style={{ width: 50, height: 50, marginLeft:20,marginRight: 10, objectFit: "cover", borderRadius: "50%" }} />
+                                        <img src={user.picture} style={{ width: 50, height: 50, marginLeft:20,marginRight: 10, objectFit: "cover", borderRadius: "50%" }} alt="dp"/>
                                         {user.name}
                                     </>
                                 }
