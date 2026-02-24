@@ -1,7 +1,7 @@
 # ChatBee
 
 A chatting application where you can chat with people privately or in different channels.
-Oops, you cannot create your own personal channel as this application is made for professional discussions. Click `[here](https://chatbee999.netlify.app/)` to visit.
+Oops, you cannot create your own personal channel as this application is made for professional discussions. Click [here](https://chatbee999.netlify.app/) to visit.
 
 ## Features
 1. Node.js based backend server
