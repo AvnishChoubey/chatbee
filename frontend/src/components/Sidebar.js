@@ -40,22 +40,28 @@ function Sidebar() {
     useEffect(() => {
         if (!user) return;
 
+        const getRooms = () => {
+            fetch("https://chatbee-8yz9.onrender.com/rooms")
+            .then((res) => res.json())
+            .then((data) => setRooms(data));
+        };
+
         setCurrentRoom("general");
         getRooms();
         socket.emit("join-room", "general");
         socket.emit("new-user");
 
-    }, [user, socket, getRooms, setCurrentRoom]);
+    }, [user, socket, setCurrentRoom, setRooms]);
 
     socket.off("new-user").on("new-user", (payload) => {
         setMembers(payload);
     });
 
-    function getRooms() {
-        fetch("https://chatbee-8yz9.onrender.com/rooms")
-            .then((res) => res.json())
-            .then((data) => setRooms(data));
-    }
+    // function getRooms() {
+    //     fetch("https://chatbee-8yz9.onrender.com/rooms")
+    //         .then((res) => res.json())
+    //         .then((data) => setRooms(data));
+    // }
 
     function orderIds(id1, id2) {
         if (id1 > id2) {
