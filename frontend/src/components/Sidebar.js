@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppContext } from "../context/appContext";
 import { addNotifications, resetNotifications } from "../features/userSlice";
@@ -34,11 +34,15 @@ function Sidebar() {
 
     socket.off("new-user").on("new-user", (payload) => setMembers(payload));
 
-    function getRooms() {
+    const getRooms = useCallback(() => {
         fetch(`${process.env.REACT_APP_API_URL || "http://localhost:3000"}/rooms`)
             .then((res) => res.json())
             .then((data) => setRooms(data));
-    }
+    });
+
+    useEffect(() => {
+        getRooms();
+    }, [getRooms]);
 
     function orderIds(id1, id2) {
         return id1 > id2 ? `${id1}-${id2}` : `${id2}-${id1}`;
