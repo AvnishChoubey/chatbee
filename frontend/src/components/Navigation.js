@@ -1,14 +1,14 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useLogoutUserMutation } from "../services/appApi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import "./Navigation.css";
 
 function Navigation() {
     const user = useSelector((state) => state.user);
     const [logoutUser] = useLogoutUserMutation();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     async function handleLogout(e) {
         e.preventDefault();
