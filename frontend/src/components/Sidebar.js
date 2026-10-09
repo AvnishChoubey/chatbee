@@ -1,9 +1,10 @@
 import React, { useContext, useEffect } from "react";
-import { Col, ListGroup, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { AppContext } from "../context/appContext";
 import { addNotifications, resetNotifications } from "../features/userSlice";
 import "./Sidebar.css";
+
+const ROOM_ICONS = { General: "💬", Techtalks: "💻", TeamWorks: "🤝", Crypto: "₿" };
 
 function Sidebar() {
     const user = useSelector((state) => state.user);
@@ -11,16 +12,10 @@ function Sidebar() {
     const { socket, setMembers, members, setCurrentRoom, setRooms, privateMemberMsg, rooms, setPrivateMemberMsg, currentRoom } = useContext(AppContext);
 
     function joinRoom(room, isPublic = true) {
-        if (!user) {
-            return alert("Please login");
-        }
+        if (!user) return alert("Please login");
         socket.emit("join-room", room, currentRoom);
         setCurrentRoom(room);
-
-        if (isPublic) {
-            setPrivateMemberMsg(null);
-        }
-        // dispatch for notifications
+        if (isPublic) setPrivateMemberMsg(null);
         dispatch(resetNotifications(room));
     }
 
@@ -28,88 +23,76 @@ function Sidebar() {
         if (currentRoom !== room) dispatch(addNotifications(room));
     });
 
-    // useEffect(() => {
-    //     if (user) {
-    //         setCurrentRoom("general");
-    //         getRooms();
-    //         socket.emit("join-room", "general");
-    //         socket.emit("new-user");
-    //     }
-    // }, []);
-
     useEffect(() => {
-        if (!user) return;
+        if (user) {
+            setCurrentRoom("general");
+            getRooms();
+            socket.emit("join-room", "general");
+            socket.emit("new-user");
+        }
+    }, []);
 
-        const getRooms = () => {
-            fetch("https://chatbee-8yz9.onrender.com/rooms")
+    socket.off("new-user").on("new-user", (payload) => setMembers(payload));
+
+    function getRooms() {
+        fetch(`${process.env.REACT_APP_API_URL || "http://localhost:3000"}/rooms`)
             .then((res) => res.json())
             .then((data) => setRooms(data));
-        };
-
-        setCurrentRoom("general");
-        getRooms();
-        socket.emit("join-room", "general");
-        socket.emit("new-user");
-
-    }, [user, socket, setCurrentRoom, setRooms]);
-
-    socket.off("new-user").on("new-user", (payload) => {
-        setMembers(payload);
-    });
-
-    // function getRooms() {
-    //     fetch("https://chatbee-8yz9.onrender.com/rooms")
-    //         .then((res) => res.json())
-    //         .then((data) => setRooms(data));
-    // }
+    }
 
     function orderIds(id1, id2) {
-        if (id1 > id2) {
-            return id1 + "-" + id2;
-        } else {
-            return id2 + "-" + id1;
-        }
+        return id1 > id2 ? `${id1}-${id2}` : `${id2}-${id1}`;
     }
 
     function handlePrivateMemberMsg(member) {
         setPrivateMemberMsg(member);
-        const roomId = orderIds(user._id, member._id);
-        joinRoom(roomId, false);
+        joinRoom(orderIds(user._id, member._id), false);
     }
 
-    if (!user) {
-        return <></>;
-    }
+    if (!user) return null;
+
     return (
-        <>
-            <h2>Available rooms</h2>
-            <ListGroup>
+        <div className="sidebar">
+            <div className="sidebar-section">
+                <p className="sidebar-label">Rooms</p>
                 {rooms.map((room, idx) => (
-                    <ListGroup.Item key={idx} onClick={() => joinRoom(room)} active={room === currentRoom} style={{ cursor: "pointer", display: "flex", justifyContent: "space-between" }}>
-                        {room} {currentRoom !== room && <span className="badge rounded-pill bg-primary">{user.newMessages[room]}</span>}
-                    </ListGroup.Item>
+                    <button
+                        key={idx}
+                        className={`sidebar-item ${room === currentRoom ? "active" : ""}`}
+                        onClick={() => joinRoom(room)}
+                    >
+                        <span className="room-icon">{ROOM_ICONS[room] || "💬"}</span>
+                        <span className="room-name">{room}</span>
+                        {user.newMessages[room] && currentRoom !== room && (
+                            <span className="notif-badge">{user.newMessages[room]}</span>
+                        )}
+                    </button>
                 ))}
-            </ListGroup>
-            <h2>Members</h2>
-            {members.map((member) => (
-                <ListGroup.Item key={member.id} style={{ cursor: "pointer" }} active={privateMemberMsg?._id === member?._id} onClick={() => handlePrivateMemberMsg(member)} disabled={member._id === user._id}>
-                    <Row>
-                        <Col xs={2} className="member-status">
-                            <img src={member.picture} className="member-status-img" alt="member dp"/>
-                            {member.status === "online" ? <i className="fas fa-circle sidebar-online-status"></i> : <i className="fas fa-circle sidebar-offline-status"></i>}
-                        </Col>
-                        <Col xs={9}>
-                            {member.name}
-                            {member._id === user?._id && " (You)"}
-                            {member.status === "offline" && " (Offline)"}
-                        </Col>
-                        <Col xs={1}>
-                            <span className="badge rounded-pill bg-primary">{user.newMessages[orderIds(member._id, user._id)]}</span>
-                        </Col>
-                    </Row>
-                </ListGroup.Item>
-            ))}
-        </>
+            </div>
+
+            <div className="sidebar-section">
+                <p className="sidebar-label">Members — {members.length}</p>
+                {members.map((member) => (
+                    <button
+                        key={member._id}
+                        className={`sidebar-item member-item ${privateMemberMsg?._id === member?._id ? "active" : ""}`}
+                        onClick={() => handlePrivateMemberMsg(member)}
+                        disabled={member._id === user._id}
+                    >
+                        <div className="member-avatar-wrap">
+                            <img src={member.picture} className="member-avatar" alt={member.name} />
+                            <span className={`status-dot ${member.status === "online" ? "online" : "offline"}`} />
+                        </div>
+                        <span className="member-name">
+                            {member.name}{member._id === user._id && " (You)"}
+                        </span>
+                        {user.newMessages[orderIds(member._id, user._id)] && (
+                            <span className="notif-badge">{user.newMessages[orderIds(member._id, user._id)]}</span>
+                        )}
+                    </button>
+                ))}
+            </div>
+        </div>
     );
 }
 

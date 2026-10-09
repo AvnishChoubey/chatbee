@@ -1,0 +1,8 @@
+.chat-layout {
+  display: flex;
+  height: calc(100vh - var(--nav-height));
+  overflow: hidden;
+}
+
+.chat-sidebar { width: 240px; flex-shrink: 0; }
+.chat-main { flex: 1; overflow: hidden; }

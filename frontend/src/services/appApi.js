@@ -5,7 +5,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const appApi = createApi({
     reducerPath: "appApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://chatbee-8yz9.onrender.com/",
+        baseUrl: process.env.REACT_APP_API_URL || "http://localhost:3000",
     }),
 
     endpoints: (builder) => ({
